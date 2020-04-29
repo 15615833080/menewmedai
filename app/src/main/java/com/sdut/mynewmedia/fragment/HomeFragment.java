@@ -39,7 +39,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener{
     private PullToRefreshView mPullToRefreshView;
     private WrapRecyclerView recycleView;
     public static final int REFRESH_DELAY = 1000;
@@ -53,6 +53,9 @@ public class HomeFragment extends Fragment {
     public static final int MSG_NEWS_OK = 3; //获取新闻数据
     private MHandler mHandler;                  //事件捕获
     private LinearLayout ll_python;
+    private LinearLayout ll_java;
+    private LinearLayout ll_big_data;
+    private LinearLayout ll_android;
     private OkHttpClient okHttpClient;
     private HomeListAdapter adapter;
     private RelativeLayout rl_title_bar;
@@ -100,6 +103,13 @@ public class HomeFragment extends Fragment {
         vpi = (ViewPagerIndicator) headView.findViewById(R.id.advert_indicator);
         tvAdName = (TextView) headView.findViewById(R.id.tv_advert_title);
         ll_python = (LinearLayout) headView.findViewById(R.id.ll_python);
+        ll_java = (LinearLayout) headView.findViewById(R.id.ll_java);
+        ll_big_data = (LinearLayout) headView.findViewById(R.id.ll_big_data);
+        ll_android = (LinearLayout) headView.findViewById(R.id.ll_android);
+        ll_python.setOnClickListener(this);
+        ll_java.setOnClickListener(this);
+        ll_big_data.setOnClickListener(this);
+        ll_android.setOnClickListener(this);
         adPager.setLongClickable(false);
         ada = new AdBannerAdapter(getActivity().getSupportFragmentManager(),mHandler);
         adPager.setAdapter(ada);
@@ -122,7 +132,7 @@ public class HomeFragment extends Fragment {
             }
         });
         resetSize();
-        setListener();
+        //setListener();
         new AdAutoSlidThread().start();
         return view;
     }
@@ -135,6 +145,27 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(getActivity(),PythonActivity.class);
+        switch (v.getId()){
+            case R.id.ll_python:
+                intent.putExtra("Subject","python");
+                break;
+            case R.id.ll_java:
+                intent.putExtra("Subject","java");
+                break;
+            case R.id.ll_big_data:
+                intent.putExtra("Subject","big_data");
+                break;
+            case R.id.ll_android:
+                intent.putExtra("Subject","android");
+                break;
+        }
+        startActivity(intent);
+    }
+
     /**
      * 事件捕获
      */

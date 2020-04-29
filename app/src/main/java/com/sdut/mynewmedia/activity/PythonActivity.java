@@ -1,4 +1,159 @@
 package com.sdut.mynewmedia.activity;
 
-public class PythonActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.itheima.PullToRefreshView;
+import com.sdut.mynewmedia.R;
+import com.sdut.mynewmedia.adapter.PythonListAdapter;
+import com.sdut.mynewmedia.bean.PythonBean;
+import com.sdut.mynewmedia.utils.Constant;
+import com.sdut.mynewmedia.utils.JsonParse;
+import com.sdut.mynewmedia.utils.LogUtil;
+import com.sdut.mynewmedia.view.SwipeBackLayout;
+import com.sdut.mynewmedia.view.WrapRecyclerView;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+public class PythonActivity extends AppCompatActivity {
+    private SwipeBackLayout layout;
+    private PullToRefreshView mPullToRefreshView;
+    private WrapRecyclerView recycleView;
+    public static final int REFRESH_DELAY = 1000;
+    public static final int MSG_PYTHON_OK = 1; //获取数据
+    private TextView tv_main_title, tv_back;
+    private RelativeLayout rl_title_bar;
+    private MHandler mHandler;
+    private PythonListAdapter adapter;
+    private Intent intent;
+    private String murl;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        layout = (SwipeBackLayout) LayoutInflater.from(this).inflate(
+                R.layout.base, null);
+        layout.attachToActivity(this);
+        intent = getIntent();
+        setContentView(R.layout.fragment_home);
+        mHandler = new MHandler();
+        String subject = intent.getStringExtra("Subject");
+        initGson(subject);
+
+    }
+
+    private void initGson(String subject) {
+        if(subject.equals("python")){
+            murl = Constant.WEB_SITE + Constant.REQUEST_PYTHON_URL;
+            LogUtil.d("Python", subject);
+        }else if(subject.equals("java")){
+            murl = Constant.WEB_SITE + Constant.REQUEST_JAVA_URL;
+            LogUtil.d("Python", subject);
+
+        }else if(subject.equals("big_data")){
+            murl = Constant.WEB_SITE + Constant.REQUEST_BIG_DATA_URL;
+            LogUtil.d("Python", subject);
+
+        }else if(subject.equals("android")){
+            murl = Constant.WEB_SITE + Constant.REQUEST_ANDROID_URL;
+            LogUtil.d("Python", subject);
+
+        }
+        initData(murl);
+        initView(subject, murl);
+    }
+
+    private void initView(String subject, String url) {
+        tv_main_title = (TextView) findViewById(R.id.tv_main_title);
+        tv_main_title.setText(subject + "学科");
+        rl_title_bar = (RelativeLayout) findViewById(R.id.title_bar);
+        rl_title_bar.setBackgroundColor(getResources().getColor(
+                R.color.rdTextColorPress));
+        tv_back = (TextView) findViewById(R.id.tv_back);
+        tv_back.setVisibility(View.VISIBLE);
+        recycleView = (WrapRecyclerView) findViewById(R.id.recycler_view);
+        recycleView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new PythonListAdapter();
+        recycleView.setAdapter(adapter);
+        mPullToRefreshView = (PullToRefreshView) findViewById(R.id.pull_to_refresh);
+        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.
+                OnRefreshListener(){
+            @Override
+            public void onRefresh() {
+                mPullToRefreshView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPullToRefreshView.setRefreshing(false);
+                        initData(url);
+                    }
+                }, REFRESH_DELAY);
+            }
+        });
+        tv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PythonActivity.this.finish();
+            }
+        });
+    }
+    private void initData(String url) {
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url(url).build();
+        Call call = okHttpClient.newCall(request);
+        //开启异步线程访问网络
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+
+                String res = response.body().string();
+                Message msg = new Message();
+                msg.what = MSG_PYTHON_OK;
+                msg.obj = res;
+                mHandler.sendMessage(msg);
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+            }
+
+        });
+    }
+    /**
+     * 事件捕获
+     */
+    class MHandler extends Handler {
+        @Override
+        public void dispatchMessage(Message msg) {
+            super.dispatchMessage(msg);
+            switch (msg.what) {
+                case MSG_PYTHON_OK:
+                    if (msg.obj != null) {
+                        String vlResult = (String) msg.obj;
+                        //使用Gson解析数据
+                        List<PythonBean> pythonList = JsonParse.getInstance().
+                                getPythonList(vlResult);
+                        adapter.setData(pythonList);
+                    }
+                    break;
+            }
+        }
+    }
 }

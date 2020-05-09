@@ -12,7 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".activity.JavaActivity"></activity>
+        <activity android:name=".activity.JavaCountActivity"
+            android:theme="@style/AppTheme.TransparentActivity"></activity>
+        <activity
+            android:name=".activity.AndroidCountActivity"
+            android:theme="@style/AppTheme.TransparentActivity" />
+        <activity android:name=".activity.JavaActivity" />
         <activity
             android:name=".activity.PythonActivity"
             android:theme="@style/AppTheme.TransparentActivity" />

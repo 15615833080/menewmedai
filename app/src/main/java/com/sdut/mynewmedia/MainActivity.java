@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
         MeFragment meFragment = new MeFragment();
         List<Fragment> alFragment = new ArrayList<Fragment>();
         alFragment.add(homeFragment);
-        /*alFragment.add(countFragment);
-        alFragment.add(videoFragment);
+        alFragment.add(countFragment);
+        /*alFragment.add(videoFragment);
         alFragment.add(meFragment);*/
         viewPager.setOffscreenPageLimit(3); //三个界面之间来回切换都不会重新加载数据。
         //ViewPager设置适配器

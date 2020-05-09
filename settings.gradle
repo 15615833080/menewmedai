@@ -1,2 +1,2 @@
-include ':app', ':PullToRefresh'
+include ':app', ':PullToRefresh', ':boommenu', ':hellocharts-library'
 rootProject.name='MyNewMedia'

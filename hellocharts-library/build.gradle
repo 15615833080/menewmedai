@@ -15,6 +15,5 @@ android {
     dependencies {
         //api fileTree(dir: 'libs', include: '*.jar')
         api 'com.android.support:support-v4:28.2.0'
-        //implementation files('libs/android-support-v4.jar')
     }
 }

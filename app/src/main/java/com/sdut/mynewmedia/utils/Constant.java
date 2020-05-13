@@ -15,4 +15,6 @@ public class Constant {
     public static final String REQUEST_BIG_DATA_URL = "/big_data_list_data.json";
     //Android功能接口
     public static final String REQUEST_ANDROID_URL = "/android_list_data.json";
+    //视频列表接口
+    public static final String REQUEST_VIDEO_URL = "/video_list_data.json";
 }

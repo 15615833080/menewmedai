@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class NewsBean implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id; //新闻Id
-    //若type为1（黑马新闻）显示一张图片的布局，为2（黑马推荐）显示三张图片的布局
+    //若type为1（最近新闻）显示一张图片的布局，为2（黑马推荐）显示三张图片的布局
     private int type;
     private String newsName;      //新闻名称
     private String newsTypeName; //新闻类型，是黑马新闻还是黑马推荐

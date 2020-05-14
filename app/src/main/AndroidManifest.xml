@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- CC视频播放需要的权限 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".TopLineApplication"
@@ -14,8 +15,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".activity.ChangeUserInfoActivity"
-            android:theme="@style/AppTheme.TransparentActivity"></activity>
+        <activity android:name=".activity.ScrawActivity"
+            android:theme="@style/AppTheme.NoTitle.Dialog"></activity>
+        <activity
+            android:name=".activity.ChooseConstellationActivity"
+            android:theme="@style/AppTheme.NoTitle.Dialog" />
+        <activity
+            android:name=".activity.ConstellationActivity"
+            android:theme="@style/AppTheme.TransparentActivity" />
+        <activity
+            android:name=".activity.CalendarActivity"
+            android:theme="@style/AppTheme.NoTitle.Dialog" />
+        <activity
+            android:name=".activity.ChangeUserInfoActivity"
+            android:theme="@style/AppTheme.TransparentActivity" />
         <activity
             android:name=".activity.UserInfoActivity"
             android:theme="@style/AppTheme.TransparentActivity" />

@@ -20,6 +20,7 @@ import com.sdut.mynewmedia.fragment.HomeFragment;
 import com.sdut.mynewmedia.fragment.MeFragment;
 import com.sdut.mynewmedia.fragment.VideoFragment;
 import com.sdut.mynewmedia.utils.LogUtil;
+import com.sdut.mynewmedia.utils.PermisionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

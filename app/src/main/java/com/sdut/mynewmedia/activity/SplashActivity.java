@@ -1,12 +1,16 @@
 package com.sdut.mynewmedia.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.sdut.mynewmedia.MainActivity;
 import com.sdut.mynewmedia.R;
+import com.sdut.mynewmedia.utils.PermisionUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -17,7 +21,24 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        init();
+        boolean flag = PermisionUtils.verifyStoragePermissions(this);
+        if(flag){
+            init();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 1:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    init();
+                }else {
+                    Toast.makeText(this,"You denied the permission", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+        }
     }
 
     private void init() {

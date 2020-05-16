@@ -17,6 +17,7 @@ import java.util.TimerTask;
 
 public class SplashActivity extends AppCompatActivity {
 
+    private boolean flag = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,12 +32,22 @@ public class SplashActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
             case 1:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    init();
-                }else {
-                    Toast.makeText(this,"You denied the permission", Toast.LENGTH_SHORT).show();
-                    finish();
+                if(grantResults.length > 0){
+                    for(int result : grantResults){
+                        if(result != PackageManager.PERMISSION_GRANTED)
+                        {
+                            flag = false;
+                        }
+                    }
+                    if(flag){
+                        init();
+                    }else {
+                        Toast.makeText(this,"You denied the permissions", Toast.LENGTH_SHORT).show();
+                        SplashActivity.this.finish();
+                    }
+
                 }
+
                 break;
         }
     }
@@ -54,6 +65,6 @@ public class SplashActivity extends AppCompatActivity {
                 SplashActivity.this.finish();
             }
         };
-        timer.schedule(task,3000);
+        timer.schedule(task,2000);
     }
 }

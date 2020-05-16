@@ -2,7 +2,7 @@ package com.sdut.mynewmedia.utils;
 
 public class Constant {
     //内网接口
-    public static final String WEB_SITE = "http://10.0.3.2:8080/topline";
+    public static final String WEB_SITE = "http://axuhongbo.top/topline";
     //首页滑动广告接口
     public static final String REQUEST_AD_URL = "/home_ad_list_data.json";
     //首页新闻列表接口

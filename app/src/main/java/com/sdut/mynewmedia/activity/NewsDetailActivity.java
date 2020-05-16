@@ -2,6 +2,7 @@ package com.sdut.mynewmedia.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -44,7 +45,7 @@ public class NewsDetailActivity extends AppCompatActivity {
         bean = (NewsBean) getIntent().getSerializableExtra("newsBean");
         position = getIntent().getStringExtra("position");
         if (bean == null) return;
-        //db=DBUtils.getInstance(NewsDetailActivity.this);
+        db=DBUtils.getInstance(NewsDetailActivity.this);
         newsUrl = bean.getNewsUrl();
         userName= UtilsHelper.readLoginUserName(NewsDetailActivity.this);
         init();
@@ -59,13 +60,13 @@ public class NewsDetailActivity extends AppCompatActivity {
         ll_loading = (LinearLayout) findViewById(R.id.ll_loading);
         iv_collection = (ImageView) findViewById(R.id.iv_collection);
         iv_collection.setVisibility(View.VISIBLE);
-//        if(db.hasCollectionNewsInfo(bean.getId(),bean.getType(),userName)){
-//            iv_collection.setImageResource(R.drawable.collection_selected);
-//            isCollection=true;
-//        }else{
-//            iv_collection.setImageResource(R.drawable.collection_normal);
-//            isCollection=false;
-//        }
+        if(db.hasCollectionNewsInfo(bean.getId(),bean.getType(),userName)){
+            iv_collection.setImageResource(R.drawable.collection_selected);
+            isCollection=true;
+        }else{
+            iv_collection.setImageResource(R.drawable.collection_normal);
+            isCollection=false;
+        }
         tv_back = (TextView) findViewById(R.id.tv_back);
         tv_back.setVisibility(View.VISIBLE);
         tv_back.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +79,27 @@ public class NewsDetailActivity extends AppCompatActivity {
         iv_collection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (UtilsHelper.readLoginStatus(NewsDetailActivity.this)) {
+                    if (isCollection) {
+                        iv_collection.setImageResource(R.drawable.collection_normal);
+                        isCollection = false;
+                        //删除保存到新闻收藏数据库中的数据
+                        db.delCollectionNewsInfo(bean.getId(), bean.getType(), userName);
+                        Toast.makeText(NewsDetailActivity.this, "取消收藏", Toast.LENGTH_SHORT).show();
+                        Intent data = new Intent();
+                        data.putExtra("position", position);
+                        setResult(RESULT_OK, data);
+                    } else {
+                        iv_collection.setImageResource(R.drawable.collection_selected);
+                        isCollection = true;
+                        //把该数据保存到新闻收藏数据库中
+                        db.saveCollectionNewsInfo(bean, userName);
+                        Toast.makeText(NewsDetailActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(NewsDetailActivity.this, "您还未登录，请先登录",Toast.LENGTH_SHORT).
+                            show();
+                }
             }
         });
     }
@@ -112,4 +133,3 @@ public class NewsDetailActivity extends AppCompatActivity {
         });
     }
 }
-

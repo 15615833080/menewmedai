@@ -1,6 +1,7 @@
 package com.sdut.mynewmedia.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -24,6 +26,7 @@ import com.sdut.mynewmedia.R;
 import com.sdut.mynewmedia.bean.UserBean;
 import com.sdut.mynewmedia.receiver.UpdateUserInfoReceiver;
 import com.sdut.mynewmedia.utils.DBUtils;
+import com.sdut.mynewmedia.utils.LogUtil;
 import com.sdut.mynewmedia.utils.UtilsHelper;
 import com.sdut.mynewmedia.view.ImageViewRoundOval;
 import com.sdut.mynewmedia.view.SwipeBackLayout;
@@ -47,6 +50,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     private ImageViewRoundOval iv_photo;
     private Bitmap head;                                //头像Bitmap
     private static String path = "/sdcard/TopLine/myHead/"; //sd路径
+    private Uri imageUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,10 +186,18 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         tv_select_camera.setOnClickListener(new View.OnClickListener() { //调用照相机
             @Override
             public void onClick(View v) {
+                File outputImage = new File(getExternalCacheDir(),
+                        spUserName+"_head.jpg");
+                if(Build.VERSION.SDK_INT >= 24){
+                    imageUri = FileProvider.getUriForFile(UserInfoActivity.this,
+                            "com.sdut.mynewmedia.fileprovider", outputImage);
+                }
+                else {
+                    imageUri = Uri.fromFile(outputImage);
+                }
+                LogUtil.d("UserInfo", imageUri.getPath()+"000");
                 Intent intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent2.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(new File(Environment.getExternalStorageDirectory(),
-                                spUserName+"_head.jpg")));
+                intent2.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 startActivityForResult(intent2, 4); //采用ForResult打开
                 dialog.dismiss();
             }
@@ -252,16 +264,27 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                 }
                 break;
             case CROP_PHOTO2:
+                Uri imageUri1;
                 if (resultCode == RESULT_OK) {
-                    File temp = new File(Environment.getExternalStorageDirectory() +"/"+
+                    File temp = new File(getExternalCacheDir() +"/"+
                             spUserName+"_head.jpg");
-                    cropPhoto(Uri.fromFile(temp)); //裁剪图片
+                    if(Build.VERSION.SDK_INT >= 24){
+                        imageUri1 = FileProvider.getUriForFile(UserInfoActivity.this,
+                                "com.sdut.mynewmedia.fileprovider", temp);
+                        LogUtil.d("UserInfo", imageUri1.getPath()+"111");
+                    }
+                    else {
+                        imageUri1 = Uri.fromFile(temp);
+                    }
+                    cropPhoto(imageUri1); //裁剪图片
                 }
                 break;
             case SAVE_PHOTO:
                 if (data != null) {
+                    LogUtil.d("UserInfo", "333");
                     Bundle extras = data.getExtras();
                     head = extras.getParcelable("data");
+                    LogUtil.d("UserInfo", "444");
                     if (head != null) {
                         String fileName=setPicToView(head); //保存在SD卡中
                         //保存头像地址到数据库中
@@ -319,6 +342,10 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         intent.putExtra("outputX", 150);
         intent.putExtra("outputY", 150);
         intent.putExtra("return-data", true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        LogUtil.d("UserInfo", uri.getPath()+"222");
         startActivityForResult(intent, SAVE_PHOTO);
     }
     private String setPicToView(Bitmap mBitmap) {

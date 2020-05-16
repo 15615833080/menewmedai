@@ -191,7 +191,7 @@ public class ScrawView extends View {
             fileOutputStream.flush();
             fileOutputStream.close();
         }else {
-            Toast.makeText(context, "保存失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show();
         }
     }
     @Override

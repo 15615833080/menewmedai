@@ -126,8 +126,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivityForResult(intent,1);
                 break;
             case R.id.tv_forget_psw:
-                /*Intent forget=new Intent(LoginActivity.this,FindPswActivity.class);
-                startActivity(forget);*/
+                Intent forget=new Intent(LoginActivity.this,FindPswActivity.class);
+                startActivity(forget);
                 break;
         }
     }
